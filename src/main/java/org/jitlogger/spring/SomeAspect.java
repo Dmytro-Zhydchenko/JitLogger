@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
 import org.jitlogger.core.Log;
+import org.jitlogger.core.LogRepository.Level;
 import org.jitlogger.core.UniqueThreadIdGenerator;
 import org.jitlogger.core.LogRepository;
 import org.jitlogger.core.Logger;
@@ -68,7 +69,7 @@ public class SomeAspect {
 	public void logAfterReturning(JoinPoint jp, Logging logging) {
 		// Class<?> clazz = jp.getTarget().getClass();
 		// log.flush(LogRepository.INFO, clazz);
-		log.flush(LogRepository.INFO);
+		log.flush(Level.INFO);
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class SomeAspect {
 	public void logAfterThrowing(JoinPoint jp, Logging logging) {
 		// Class<?> clazz = jp.getTarget().getClass();
 		// log.flush(LogRepository.DEBUG, clazz);
-		log.flush(LogRepository.DEBUG);
+		log.flush(Level.DEBUG);
 	}
 
 }

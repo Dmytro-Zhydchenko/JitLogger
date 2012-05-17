@@ -4,6 +4,8 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jitlogger.core.LogRepository.Level;
+
 /**
  * 
  * Returns an instance of this class and writes logs down into the Map
@@ -30,11 +32,7 @@ public class Logger {
 	 */
 	public static Logger getLogger(Class<?> clazz) {
 		if (logger == null) {
-
-			Logger logger = new Logger();
-			logger.setUncaughtExceptionHandler(new Logger.MyUncaughtExceptionHandler());
-
-			Logger.logger = logger;
+			logger = new Logger();
 		}
 		Logger.clazz = clazz;
 		return logger;
@@ -49,22 +47,22 @@ public class Logger {
 	}
 
 	public void debug(String message) {
-		this.addLog(LogRepository.DEBUG, message);
+		this.addLog(Level.DEBUG, message);
 	}
 
 	public void info(String message) {
-		this.addLog(LogRepository.INFO, message);
+		this.addLog(Level.INFO, message);
 	}
 
 	public void warn(String message) {
-		this.addLog(LogRepository.WARN, message);
+		this.addLog(Level.WARN, message);
 	}
 
 	public void error(String message) {
-		this.addLog(LogRepository.ERROR, message);
+		this.addLog(Level.ERROR, message);
 	}
 
-	private void addLog(int level, String message) {
+	private void addLog(Level level, String message) {
 
 		if (!Thread.currentThread().getUncaughtExceptionHandler()
 				.equals(uncaughtExceptionHandler)) {
@@ -75,13 +73,13 @@ public class Logger {
 		String id = UniqueThreadIdGenerator.getId();
 		List<Log> messages = LogRepository.getMap().get(id);
 
+		// The following check might be removing
 		if (messages == null) {
 			messages = new ArrayList<Log>();
 			LogRepository.getMap().put(id, messages);
 		}
 
 		Log logBean = new Log();
-		logBean.setClassName("");
 		logBean.setLevel(level);
 		logBean.setMessage(message);
 
@@ -92,11 +90,11 @@ public class Logger {
 	 * Writes data into the file according to level value.
 	 * 
 	 * @param level
-	 *            log level
+	 *            LogRepository.'level' value.
 	 * @param clazz
 	 *            class instance
 	 */
-	public void flush(int level) {
+	public void flush(Level level) {
 
 		LogRepository.flush(level, clazz);
 	}
@@ -108,9 +106,10 @@ public class Logger {
 	 *            class instance
 	 */
 	public void flush() {
-		LogRepository.flush(LogRepository.DEBUG, clazz);
+		LogRepository.flush(Level.DEBUG, clazz);
 	}
 
+	@Deprecated
 	public void setUncaughtExceptionHandler(
 			UncaughtExceptionHandler uncaughtExceptionHandler) {
 		Thread.currentThread().setUncaughtExceptionHandler(
@@ -124,10 +123,11 @@ public class Logger {
 			System.err.println("Uncaught exception by " + t + ":");
 			Logger log = Logger.getLogger();
 			if (log != null) {
-				log.flush(LogRepository.DEBUG);
+				log.flush(Level.DEBUG);
 			}
 			e.printStackTrace();
 		}
 
 	}
+
 }

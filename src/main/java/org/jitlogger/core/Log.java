@@ -1,5 +1,7 @@
 package org.jitlogger.core;
 
+import org.jitlogger.core.LogRepository.Level;
+
 /**
  * Contains message of the log and its threshold level.
  * 
@@ -11,7 +13,7 @@ public class Log {
 	@Deprecated
 	String className;
 
-	int level;
+	Level level;
 
 	String message;
 
@@ -19,7 +21,7 @@ public class Log {
 
 	}
 
-	public Log(String className, int level, String message) {
+	public Log(String className, Level level, String message) {
 		this.className = className;
 		this.level = level;
 		this.message = message;
@@ -34,11 +36,11 @@ public class Log {
 		this.className = className;
 	}
 
-	public int getLevel() {
+	public Level getLevel() {
 		return level;
 	}
 
-	public void setLevel(int level) {
+	public void setLevel(Level level) {
 		this.level = level;
 	}
 

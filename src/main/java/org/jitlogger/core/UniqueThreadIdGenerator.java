@@ -23,6 +23,7 @@ public class UniqueThreadIdGenerator {
 	private static final ThreadLocal<String> transactionId = new ThreadLocal<String>() {
 
 		private String txName;
+		private final static String defaultTxName = "transaction";
 
 		@Override
 		protected String initialValue() {
@@ -31,6 +32,11 @@ public class UniqueThreadIdGenerator {
 
 		@Override
 		public void set(String value) {
+			if(value == null){
+				txName = value;
+				return;
+			}
+				
 			txName = value;
 		}
 

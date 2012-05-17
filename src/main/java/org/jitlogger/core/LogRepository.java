@@ -2,7 +2,6 @@ package org.jitlogger.core;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -29,13 +28,12 @@ public class LogRepository {
 
 	private static String fileDest;
 
-	public static final int DEBUG = 1;
-	public static final int INFO = 2;
-	public static final int WARN = 3;
-	public static final int ERROR = 4;
-
 	public void setFileDest(String fileDest) {
 		LogRepository.fileDest = fileDest;
+	}
+
+	public enum Level {
+		DEBUG, INFO, WARN, ERROR;
 	}
 
 	/**
@@ -44,22 +42,6 @@ public class LogRepository {
 	 *            - int primitive representation of the log level
 	 * @return String representation of the log level.
 	 */
-	public static String valueOf(int i) {
-		switch (i) {
-		case 1:
-			return "DEBUG";
-		case 2:
-			return "INFO";
-		case 3:
-			return "WARN";
-		case 4:
-			return "EROR";
-		default:
-			new IndexOutOfBoundsException("" + i);
-		}
-		return "";
-	}
-
 	public static Map<String, List<Log>> getMap() {
 		if (map == null) {
 			map = new HashMap<String, List<Log>>();
@@ -72,11 +54,11 @@ public class LogRepository {
 	 * case if there is a logger for the {@value clazz} value.
 	 * 
 	 * @param level
-	 *            - permissible level of the logs.
+	 *            - permissible level of the logs. LogRepository.level value.
 	 * @param clazz
 	 *            - instance of the Class that includes @Logging annotation.
 	 */
-	static void flush(int level, Class<?> clazz) {
+	static void flush(Level level, Class<?> clazz) {
 
 		String id = UniqueThreadIdGenerator.getId();
 
@@ -96,12 +78,12 @@ public class LogRepository {
 		}
 
 		for (Log log : logs) {
-			if (log.level < level) {
+			if (log.level.compareTo(level) < 0) {
 				continue;
 			}
 
 			if (logger == null) {
-				sb.append(valueOf(log.getLevel())).append(" ");
+				sb.append(log.getLevel()).append(" ");
 				sb.append(clazz.getSimpleName()).append(" ");
 				sb.append(" - ").append(id).append(" - ");
 				sb.append(log.getMessage()).append("\n");
@@ -163,11 +145,12 @@ public class LogRepository {
 			logger = LogManager.exists(substr);
 		}
 
-		// share the following code
+		// the following code might be shared
 
 		// if (logger == null) {
 		// logger = LogManager.getRootLogger();
 		// }
+
 		return logger;
 	}
 
